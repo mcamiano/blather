@@ -9,6 +9,7 @@ require "hoe"
 # Hoe.plugin :racc
 # Hoe.plugin :rcov
 # Hoe.plugin :rdoc
+Hoe.plugin :minitest
 
 Hoe.spec "shruggles" do
   developer("Mitch Amiano", "mitch.amiano@agilemarkup.com")
