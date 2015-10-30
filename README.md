@@ -1,13 +1,6 @@
-= shruggles
+## shruggles
 
-home  :: https://github.com/mcamiano/shruggles
-code  :: https://github.com/mcamiano/shruggles
-rdoc  :: https://github.com/mcamiano/shruggles
-bugs  :: https://github.com/mcamiano/shruggles
-
-== DESCRIPTION:
-
-Shruggles generates texts that mimic the distribution of word-to-word transitions found in sampled input texts.
+Shruggles is a ruby gem that generates texts that mimic the distribution of word-to-word transitions found in sampled input texts.
 
 Shruggles uses a hash as a directed graph with integer weighted edges to represent a Markov chain. 
 The weight of an edge is the frequency with which one token follows another.
@@ -23,7 +16,29 @@ suggesting I take a look at a PHP Markov Chain text generator. At the time the w
 denote emo struggles combined with shrugs. Shruggles seemed an even better working title for the project,
 and hadn't yet been used once on Github.
 
-== FEATURES/PROBLEMS:
+## Requirements
+
+Ruby
+Texts to sample
+
+## Synopsis
+
+  require "shruggles"
+  shruggle = Shruggles.new
+  shruggle.train File.read('test/_data/fixture1.txt')
+  shruggle.shrug(sentences: 5) { |sentence| puts sentence }
+
+## Usage
+
+### Install:
+
+```
+gem install shruggles
+```
+
+tbd
+
+## Internals
 
 Shruggles is trained by parsing sample texts. Shruggles then generates meaningless sentences using the probabilities derived from the sample.
 
@@ -33,29 +48,34 @@ Right now the gem makes a lot assumptions about text, mainly that it is relative
 
 Repeated calls Shruggles#train continue to build out the chain.
 
-It isn't quite done yet. Wants:
+### Basic Algorithm Flow
+
+1. parse input stream into tokens
+    - whitespace of any kind as delimiter
+    - contiguous non-punctuation characters as word-tokens
+    - sentence punctuation characters as sentence-end-token, sentence-begin-token
+    - end of stream as sentence-end-token 
+2. start with current graph node := root node: key:=sentence-begin-token
+3. read next token as new node
+    - add weighted edge from current graph node to new node: key:=token, edge weight+=1
+    - current graph node := new node
+4. repeat at (3) until current graph node is sentence-end-token
+5. repeat at (2) until stream end
+
+- result is weighted directed cyclic graph
+- sum of edge weights on one node proportional to 100%
+- to generate texts for sentence, start at root node, navigate through one edge with probability edge-weight-from-node/sum(edge weights for node), read node key; repeat until node reached has key==sentence-end-token
+
+
+## Roadmap
+
+Shruggles isn't quite done yet. Wants:
 - persist the training to a serialized format, perhaps json, so it can be read back in
 - finish up the gem packaging 
 - test it for edge case behavior; it should at least fail gracefully
 - improve handling of quotation punctuations
 
-
-== SYNOPSIS:
-
-  require "shruggles"
-  shruggle = Shruggles.new
-  shruggle.train File.read('test/_data/fixture1.txt')
-  shruggle.shrug(sentences: 5) { |sentence| puts sentence }
-
-== REQUIREMENTS:
-
-* n/a
-
-== INSTALL:
-
-* sudo gem install shruggles
-
-== DEVELOPERS:
+## Contributing
 
 After checking out the source, run:
 
@@ -64,7 +84,7 @@ After checking out the source, run:
 This task will install any missing dependencies, run the tests/specs,
 and generate the RDoc.
 
-== LICENSE:
+## LICENSE:
 
 (The MIT License)
 
